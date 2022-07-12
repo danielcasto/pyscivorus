@@ -1,0 +1,74 @@
+<diagram program="umletino" version="15.0.0"><zoom_level>10</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>0</x><y>0</y><w>480</w><h>590</h></coordinates><panel_attributes>_Scene_
+in scene.py
+--
+_Purpose:_
+
+- A wrapper for camera, light, and shape types
+- The prefered way the user interacts with the system
+--
+_Class Attributes:_
+
+- lights: list[LightType]
+- shapes: list[ShapeType]
+- camera: Camera
+--
+_Methods:_
+
+__init__(self):
+- initialized with no lights, shapes, or cameras
+
+add_directional_light(self, intensity: float, direction: np.array):
+- Adds directional light to scene with given args
+- Returns self
+
+add_point_light(self, intensity: float, pos: np.array):
+- Adds point light to scene with given args
+- Returns self
+
+add_sphere(self, center: np.array, radius: float, color: tuple[int, int, int]):
+- Adds sphere to scene with given args
+- Returns self
+
+with_orthographic_camera(self, basis: dict[str, np.array], pos: np.array):
+- Sets only camera to orthographic camera with given basis and eye position
+- Returns self
+
+with_perspective_camera(self, basis: dict[str, np.array], pos: np.array, depth: float):
+- Sets only camera to perspective camera with given basis, eye position, and depth
+- Returns self
+
+take_picture(self):
+- Uses camera to take picture of the scene.
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>670</x><y>0</y><w>280</w><h>230</h></coordinates><panel_attributes>_DirectionalLight_
+in light.py
+--
+_Purpose:_
+
+- A struct holding all the values necessary for a single 
+  directional light source
+--
+_Class Attributes:_
+
+- intensity: float
+- direction: np.array
+--
+_Methods:_
+
+__init__(self, intensity: float, direction: np.array):
+- Initialized with given args</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>670</x><y>270</y><w>280</w><h>230</h></coordinates><panel_attributes>_PointLight_
+in light.py
+--
+_Purpose:_
+
+- A struct holding all the values necessary for a single 
+  point light source
+--
+_Class Attributes:_
+
+- intensity: float
+- pos: np.array
+--
+_Methods:_
+
+__init__(self, intensity: float, pos: np.array):
+- Initialized with given args</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>470</x><y>100</y><w>220</w><h>30</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;200;10</additional_attributes></element><element><id>Relation</id><coordinates><x>470</x><y>370</y><w>220</w><h>30</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;200;10</additional_attributes></element></diagram>
