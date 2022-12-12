@@ -1,2 +1,2 @@
 # pyscivorus
-## A continuation from Python-Ray-Tracer-Engine
+## A continuation of Python-Ray-Tracer-Engine
