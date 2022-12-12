@@ -1,2 +1,2 @@
 # pyscivorus
-## A simple ray tracer made in pure python
+## A continuation from Python-Ray-Tracer-Engine
