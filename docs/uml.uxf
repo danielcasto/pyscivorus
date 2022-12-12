@@ -1,4 +1,4 @@
-<diagram program="umletino" version="15.0.0"><zoom_level>10</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>0</x><y>0</y><w>480</w><h>590</h></coordinates><panel_attributes>_Scene_
+<diagram program="umletino" version="15.0.0"><zoom_level>7</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>0</x><y>357</y><w>336</w><h>413</h></coordinates><panel_attributes>_Scene_
 in scene.py
 --
 _Purpose:_
@@ -25,21 +25,21 @@ add_point_light(self, intensity: float, pos: np.array):
 - Adds point light to scene with given args
 - Returns self
 
-add_sphere(self, center: np.array, radius: float, color: tuple[int, int, int]):
+add_sphere(self, center: np.array, radius: float, color: np.array:
 - Adds sphere to scene with given args
 - Returns self
 
-with_orthographic_camera(self, basis: dict[str, np.array], pos: np.array):
+with_orthographic_camera(self, basis: dict[str, np.array], position: np.array):
 - Sets only camera to orthographic camera with given basis and eye position
 - Returns self
 
-with_perspective_camera(self, basis: dict[str, np.array], pos: np.array, depth: float):
+with_perspective_camera(self, basis: dict[str, np.array], position: np.array, depth: float):
 - Sets only camera to perspective camera with given basis, eye position, and depth
 - Returns self
 
 take_picture(self):
 - Uses camera to take picture of the scene.
-</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>670</x><y>0</y><w>280</w><h>230</h></coordinates><panel_attributes>_DirectionalLight_
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>630</x><y>0</y><w>196</w><h>161</h></coordinates><panel_attributes>_DirectionalLight_
 in light.py
 --
 _Purpose:_
@@ -55,7 +55,7 @@ _Class Attributes:_
 _Methods:_
 
 __init__(self, intensity: float, direction: np.array):
-- Initialized with given args</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>670</x><y>270</y><w>280</w><h>230</h></coordinates><panel_attributes>_PointLight_
+- Initialized with given args</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>630</x><y>175</y><w>196</w><h>161</h></coordinates><panel_attributes>_PointLight_
 in light.py
 --
 _Purpose:_
@@ -71,4 +71,34 @@ _Class Attributes:_
 _Methods:_
 
 __init__(self, intensity: float, pos: np.array):
-- Initialized with given args</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>470</x><y>100</y><w>220</w><h>30</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;200;10</additional_attributes></element><element><id>Relation</id><coordinates><x>470</x><y>370</y><w>220</w><h>30</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;10;200;10</additional_attributes></element></diagram>
+- Initialized with given args</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>329</x><y>70</y><w>315</w><h>378</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;520;430;10</additional_attributes></element><element><id>Relation</id><coordinates><x>329</x><y>245</y><w>315</w><h>210</h></coordinates><panel_attributes>lt=&lt;-</panel_attributes><additional_attributes>10;280;430;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>574</x><y>420</y><w>322</w><h>175</h></coordinates><panel_attributes>_Sphere_
+in shape.py
+--
+_Class Attributes_
+
+- center: np.array
+- radius: float
+- color: np.array
+--
+_Methods_
+__init__(self, center: np.array, radius: float, color: np.array)
+
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>329</x><y>441</y><w>259</w><h>105</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;350;130</additional_attributes></element><element><id>UMLClass</id><coordinates><x>441</x><y>728</y><w>448</w><h>357</h></coordinates><panel_attributes>_Camera_
+in camera.py
+--
+_Class Attributes_
+
+- cameraType: str
+- basis: dict[str, np.array] # must contain keys v, w, u
+- position: np.array
+- ray_size: tuple[int, int]
+- depth: float (optional depending on camera type)
+--
+_Methods_
+ __init__(self, basis: dict[str, np.array], ray_size: tuple [int. int] position: np.array, depth: float = None) # if they add depth assume perspective?
+
+take_picture(self, lights, shapes):
+
+_get_solutions(self, lights, shapes):
+
+_get_sphere_valid_solution(self, sphere: Sphere, ray: Ray)</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>329</x><y>441</y><w>126</w><h>469</h></coordinates><panel_attributes>lt=&lt;&lt;-</panel_attributes><additional_attributes>10;10;160;650</additional_attributes></element></diagram>
