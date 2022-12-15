@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
 import sys
+from numpy.linalg import norm
 
 sys.path.append('../pyscivorus')
 
@@ -38,11 +39,9 @@ class CameraTest(unittest.TestCase):
                 self.assertTrue(assertionVal)
     
     def test_perspective_camera_init(self):
-        pass
-        # TODO remove after perspective camera implementation
-        '''TEST_SIZE = (3, 3)
+        TEST_SIZE = (3, 3)
 
-        u = np.array([0.0, 1.0, 0.0])
+        u = np.array([0.0, -1.0, 0.0])
         v = np.array([0.0, 0.0, 1.0])
         w = np.array([1.0, 0.0, 0.0])
 
@@ -56,22 +55,35 @@ class CameraTest(unittest.TestCase):
             'w': w
         }
 
-        # TODO update following to be accurate to perspective rays and then remove pass
-
-        ray_direction = np.array([-1.0, 0.0, 0.0])
+        ray_position = e
 
         ray_arr = np.empty((3,3), dtype=Ray)
-        ray_arr[0] = np.array([Ray(np.array([0.0, -1.0, 1.0]), ray_direction), Ray(np.array([0.0, 0.0, 1.0]), ray_direction), Ray(np.array([0.0, 1.0, 1.0]), ray_direction)])
-        ray_arr[1] = np.array([Ray(np.array([0.0, -1.0, 0.0]), ray_direction), Ray(np.array([0.0, 0.0, 0.0]), ray_direction), Ray(np.array([0.0, 1.0, 0.0]), ray_direction)])
-        ray_arr[2] = np.array([Ray(np.array([0.0, -1.0, -1.0]), ray_direction), Ray(np.array([0.0, 0.0, -1.0]), ray_direction), Ray(np.array([0.0, 1.0, -1.0]), ray_direction)])
+        ray_arr[0] = np.array([Ray(ray_position, np.array([-5.0, 1.0, 1.0])), Ray(ray_position, np.array([-5.0, 0.0, 1.0])), Ray(ray_position, np.array([-5.0, -1.0, 1.0]))])
+        ray_arr[1] = np.array([Ray(ray_position, np.array([-5.0, 1.0, 0.0])), Ray(ray_position, np.array([-5.0, 0.0, 0.0])), Ray(ray_position, np.array([-5.0, -1.0, 0.0]))])
+        ray_arr[2] = np.array([Ray(ray_position, np.array([-5.0, 1.0, -1.0])), Ray(ray_position, np.array([-5.0, 0.0, -1.0])), Ray(ray_position, np.array([-5.0, -1.0, -1.0]))])
+
+        for i in range(len(ray_arr)):
+            for j in range(len(ray_arr[i])):
+                ray_arr[i,j].direction = ray_arr[i,j].direction / norm(ray_arr[i,j].direction)
 
         camera = Camera(basis, TEST_SIZE, e, d)
+
+        '''print('\nexpected')      ### For debugging ###
+        for row in ray_arr:
+            for ray in row:
+                print(ray.direction, end=' ')
+            print()
+
+        print('actual')
+        for row in camera.rays:
+            for ray in row:
+                print(ray.direction, end=' ')
+            print()'''
 
         for i in range(len(ray_arr)):
             for j in range(len(ray_arr[i])):
                 assertionVal = np.allclose(camera.rays[i,j].origin, ray_arr[i][j].origin) and np.allclose(camera.rays[i,j].direction, ray_arr[i][j].direction)
                 self.assertTrue(assertionVal)
-        '''
 
     def test_take_picture(self): # TODO
         pass
@@ -100,12 +112,10 @@ class CameraTest(unittest.TestCase):
 
         self.assertEqual(actual_output, expected_camera_type_parallel)
 
-        # TODO remove after perspective camera implementation
-
-        '''perspective_camera = Camera(basis, TEST_SIZE, e, d)
+        perspective_camera = Camera(basis, TEST_SIZE, e, d)
         actual_output = perspective_camera.get_camera_type()
 
-        self.assertEqual(actual_output, expected_camera_type_perspective)'''
+        self.assertEqual(actual_output, expected_camera_type_perspective)
     
     def test__get_sphere_valid_solution(self):
         TEST_SIZE = (1,1)
@@ -126,7 +136,7 @@ class CameraTest(unittest.TestCase):
 
         center = np.array([-2.0, 0.0, 0.0])
         radius = 1.2
-        color = (0, 0, 0)
+        color = np.array([0, 0, 0])
         phong_exponent = 1.0
         sphere = Sphere(center, color, radius, phong_exponent)
 
@@ -159,7 +169,7 @@ class CameraTest(unittest.TestCase):
 
         center = np.array([-2.0, 0.0, 0.0])
         radius = 1.2
-        color = (0, 0, 0)
+        color = np.array([0, 0, 0])
         phong_exponent = 1.0
         sphere = Sphere(center, color, radius, phong_exponent)
 

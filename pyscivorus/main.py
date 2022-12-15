@@ -23,10 +23,12 @@ def main():
     scene = Scene()
     scene.set_background_color(np.array([50, 0, 50]))
     scene.set_ambient_light_intensity(0.5)
+    
     scene.add_directional_light(1, np.array([0, 0, -1]))
     scene.add_directional_light(0.5, np.array([1, -1, -1]))
-    scene.add_sphere(np.array([1000, 700, 200]), np.array([0, 0, 150]), 100, 100)
-    scene.add_sphere(np.array([200, 500, 300]), np.array([50, 50, 50]), 50)
+    
+    scene.add_sphere(np.array([100, 650, 250]), np.array([0, 0, 150]), 100, 100)
+    scene.add_sphere(np.array([100, 600, 300]), np.array([50, 50, 50]), 50)
 
     basis = {
         'u': np.array([0, -1, 0]),
@@ -34,7 +36,7 @@ def main():
         'w': np.array([-1, 0, 0])
     }
 
-    scene.with_orthographic_camera(basis, np.array([0, SCREEN_DIMENSIONS[0]//2, SCREEN_DIMENSIONS[1]//2]), SCREEN_DIMENSIONS)
+    scene.with_perspective_camera(basis, np.array([-500, SCREEN_DIMENSIONS[0]//2, SCREEN_DIMENSIONS[1]//2]), SCREEN_DIMENSIONS, 500)
 
     rgb_arr = scene.take_picture()
     

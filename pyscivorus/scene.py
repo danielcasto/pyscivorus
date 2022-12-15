@@ -71,9 +71,11 @@ class Scene:
 
         return self
 
-    def with_perspective_camera(self, basis: dict[str, np.array], position: np.array, depth: float, size: tuple[int, int]) -> Any:
+    def with_perspective_camera(self, basis: dict[str, np.array], position: np.array, size: tuple[int, int], depth: float) -> Any:
+        '''Takes in size as (width, height) because of pygame convention. position is of the CAMERA, not the camera plane'''
+
         self.camera = Camera(basis, size, position, depth)
-        rootLogger.warning('Perspective camera added, but is not yet supported in camera class')
+        rootLogger.debug('Perspective camera added')
 
         return self
 

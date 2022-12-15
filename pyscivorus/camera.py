@@ -22,8 +22,6 @@ class Camera:
         more intuitive with array operations but pygame uses convention (width, height)'''
         # TODO make basis optional argument and by default have w=<-1,0,0>, v=<0,0,1>, u=<0,-1,0>
 
-        rootLogger.info('Camera initialized')
-
         self.w = basis['w']
         self.v = basis['v']
         self.u = basis['u']
@@ -49,23 +47,29 @@ class Camera:
 
         height = updated_ray_size[0]
         width = updated_ray_size[1]
-
-        # This makes sense because the top left corner of the camera's perspective will have a positive v but a negative u
-        top_left_corner_pos = np.array(self.e + (height//2)*self.v - (width//2)*self.u) 
         
         if self.d is None:
             # Parallel camera
-            rootLogger.debug('Parallel camera initialized.')
+            # This makes sense because the top left corner of the camera's perspective will have a positive v but a negative u
+            top_left_corner_pos = np.array(self.e + (height//2)*self.v - (width//2)*self.u) # TODO will this method always work at every angle and axis?
 
             for i in range(height):
                 for j in range(width):
-                    #self.rays[i, (width-1)-j] = Ray(top_left_corner_pos - i*self.v - j*self.u, -self.w)
                     self.rays[i, j] = Ray(top_left_corner_pos - i*self.v + j*self.u, -self.w)
+
+            rootLogger.debug('Parallel camera initialized.')
         else:
-            # Perspective
-            rootLogger.error('Attempted to initialized perspective camera, but it is not yet supported.')
-            raise Exception('Attempted to initialized perspective camera, but it is not yet supported.')
-            # TODO set rays
+            # Perspective camera
+            top_left_direction = np.array((-self.w)*self.d + (height//2)*self.v - (width//2)*self.u) # TODO will this method always work at every angle and axis?
+            for i in range(height):
+                for j in range(width):
+                    current_direction = top_left_direction - i*self.v + j*self.u
+
+                    # unit vector
+                    ray_direction = (current_direction)/norm(current_direction)
+                    self.rays[i, j] = Ray(self.e, ray_direction)
+
+            rootLogger.debug('Perspective camera initialized')
 
         rootLogger.debug(f'Rays of size {self.rays.shape} initialized.')
         rootLogger.debug(f'Top left corner ray coordinates: {self.rays[0, 0].origin}')
@@ -77,7 +81,9 @@ class Camera:
         rootLogger.debug(f'Camera position: {self.e}')
         rootLogger.debug(f'Camera depth: {self.d}')
     
-    # TODO create initialize basis and rays function
+    # TODO set basis function
+    # TODO set rays for orthogonal function
+    # TODO set rays for perspective function 
 
     # TODO rotate camera function
             
@@ -251,5 +257,5 @@ class Camera:
                 color = color_array[i,j]
                 result_array[i, j] = (color[0], color[1], color[2])
 
-        # tranpose to match pygame size conventions. Convert from (height, width) to (width, height)
+        # transpose to match pygame size conventions. Convert from (height, width) to (width, height)
         return np.transpose(result_array, (1, 0, 2))
