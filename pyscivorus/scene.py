@@ -18,7 +18,7 @@ class Scene:
     
     def set_ambient_light_intensity(self, ambient_intensity: float):
         if ambient_intensity < 0 or ambient_intensity > 1:
-            raise "ambient_intensity cannot be less than 0 or greater than 1"
+            raise Exception('ambient_intensity cannot be less than 0 or greater than 1')
 
         self.ambient_intensity = ambient_intensity
         rootLogger.debug(f'set ambient_intensity: {self.ambient_intensity}')
@@ -28,19 +28,19 @@ class Scene:
     def set_background_color(self, background_color: np.array):
         if background_color.shape != (3,):
             rootLogger.error(f'background_color shape is not (3,). background_color: {background_color}')
-            raise f'background_color shape is not (3,). background_color: {background_color}'
+            raise Exception(f'background_color shape is not (3,). background_color: {background_color}')
 
         if background_color[0] < 0 or background_color[0] > 255:
             rootLogger.error(f'background_color in position 0 contains a value greater than 255 or less than 0. Given background_color: {background_color}')
-            raise f'background_color in position 0 contains a value greater than 255 or less than 0. Given background_color: {background_color}'
+            raise Exception(f'background_color in position 0 contains a value greater than 255 or less than 0. Given background_color: {background_color}')
 
         if background_color[1] < 0 or background_color[1] > 255:
             rootLogger.error(f'background_color in position 1 contains a value greater than 255 or less than 0. Given background_color: {background_color}')
-            raise f'background_color in position 1 contains a value greater than 255 or less than 0. Given background_color: {background_color}'
+            raise Exception(f'background_color in position 1 contains a value greater than 255 or less than 0. Given background_color: {background_color}')
 
         if background_color[2] < 0 or background_color[2] > 255:
             rootLogger.error(f'background_color in position 2 contains a value greater than 255 or less than 0. Given background_color: {background_color}')
-            raise f'background_color in position 2 contains a value greater than 255 or less than 0. Given background_color: {background_color}'
+            raise Exception(f'background_color in position 2 contains a value greater than 255 or less than 0. Given background_color: {background_color}')
 
         self.background_color = background_color
         rootLogger.debug(f'background_color: {self.background_color}')
@@ -81,11 +81,11 @@ class Scene:
 
     def move_camera_to(self, position: np.array):
         rootLogger.error('This function has not been implemented yet')
-        raise 'This function has not been implemented yet'
+        raise Exception('This function has not been implemented yet')
     
     def move_camera_relative(self, relative_position: np.array):
         rootLogger.error('This function has not been implemented yet')
-        raise 'This function has not been implemented yet'
+        raise Exception('This function has not been implemented yet')
     
     # TODO rotate camera function
 

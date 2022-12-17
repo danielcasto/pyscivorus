@@ -12,19 +12,19 @@ class Sphere:
 
         if color.shape != (3,):
             rootLogger.error(f'color shape is not (3,). color: {color}')
-            raise f'color shape is not (3,). color: {color}'
+            raise Exception(f'color shape is not (3,). color: {color}')
 
         if color[0] < 0 or color[0] > 255:
             rootLogger.error(f'color in position 0 contains a value greater than 255 or less than 0. Given color: {color}')
-            raise f'color in position 0 contains a value greater than 255 or less than 0. Given color: {color}'
+            raise Exception(f'color in position 0 contains a value greater than 255 or less than 0. Given color: {color}')
 
         if color[1] < 0 or color[1] > 255:
             rootLogger.error(f'color in position 1 contains a value greater than 255 or less than 0. Given color: {color}')
-            raise f'color in position 1 contains a value greater than 255 or less than 0. Given color: {color}'
+            raise Exception(f'color in position 1 contains a value greater than 255 or less than 0. Given color: {color}')
 
         if color[2] < 0 or color[2] > 255:
             rootLogger.error(f'color in position 2 contains a value greater than 255 or less than 0. Given color: {color}')
-            raise f'color in position 2 contains a value greater than 255 or less than 0. Given color: {color}'
+            raise Exception(f'color in position 2 contains a value greater than 255 or less than 0. Given color: {color}')
 
         self.color = color
         self.radius = radius

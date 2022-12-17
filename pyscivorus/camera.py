@@ -22,25 +22,14 @@ class Camera:
         more intuitive with array operations but pygame uses convention (width, height)'''
 
         if basis is None:
-            self.v = np.array([0.0, 0.0, 1.0])
-            self.u = np.array([0.0, -1.0, 0.0])
-            self.w = np.array([-1.0, 0.0, 0.0])
-        else:
-            self.w = basis['w']
-            self.v = basis['v']
-            self.u = basis['u']
-
-            self.w = self.w/norm(self.w)
-            self.v = self.v/norm(self.v)
-            self.u = self.u/norm(self.u)
+            basis = {
+                'v': np.array([0.0, 0.0, 1.0]),
+                'u': np.array([0.0, -1.0, 0.0]),
+                'w': np.array([-1.0, 0.0, 0.0])
+            }
         
-
-        are_all_orthogonal = np.isclose(np.dot(self.w, self.v), 0) and np.isclose(np.dot(self.v, self.u), 0) and np.isclose(np.dot(self.u, self.w), 0)
-
-        if not are_all_orthogonal:
-            rootLogger.error('Camera basis invalid. Not all the basis vectors are orthogonal to each other.')
-            raise 'Camera basis invalid. Not all the basis vectors are orthogonal to each other.'
-
+        self._set_basis(basis)
+        
         self.e = position
         self.d = depth
 
@@ -86,7 +75,21 @@ class Camera:
         rootLogger.debug(f'Camera position: {self.e}')
         rootLogger.debug(f'Camera depth: {self.d}')
     
-    # TODO set basis function
+    def _set_basis(self, basis):
+        self.w = basis['w']
+        self.v = basis['v']
+        self.u = basis['u']
+
+        self.w = self.w/norm(self.w)
+        self.v = self.v/norm(self.v)
+        self.u = self.u/norm(self.u)
+
+        are_all_orthogonal = np.isclose(np.dot(self.w, self.v), 0) and np.isclose(np.dot(self.v, self.u), 0) and np.isclose(np.dot(self.u, self.w), 0)
+
+        if not are_all_orthogonal:
+            rootLogger.error('Camera basis invalid. Not all the basis vectors are orthogonal to each other.')
+            raise Exception('Camera basis invalid. Not all the basis vectors are orthogonal to each other.')
+    
     # TODO set rays for orthogonal function
     # TODO set rays for perspective function 
 
