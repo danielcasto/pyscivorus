@@ -14,7 +14,7 @@ class CameraTest(unittest.TestCase):
 
         u = np.array([0.0, -1.0, 0.0])
         v = np.array([0.0, 0.0, 1.0])
-        w = np.array([1.0, 0.0, 0.0])
+        w = np.array([-1.0, 0.0, 0.0])
 
         e = np.array([0.0, 0.0, 0.0])
 
@@ -24,7 +24,7 @@ class CameraTest(unittest.TestCase):
             'w': w
         }
 
-        ray_direction = np.array([-1.0, 0.0, 0.0])
+        ray_direction = np.array([1.0, 0.0, 0.0])
 
         ray_arr = np.empty((3,3), dtype=Ray)
         ray_arr[0] = np.array([Ray(np.array([0.0, 1.0, 1.0]), ray_direction), Ray(np.array([0.0, 0.0, 1.0]), ray_direction), Ray(np.array([0.0, -1.0, 1.0]), ray_direction)])
@@ -41,6 +41,7 @@ class CameraTest(unittest.TestCase):
     def test_perspective_camera_init(self):
         TEST_SIZE = (3, 3)
 
+        # I accidentally made this basis different than the other tests however the values here are still correct given this basis
         u = np.array([0.0, -1.0, 0.0])
         v = np.array([0.0, 0.0, 1.0])
         w = np.array([1.0, 0.0, 0.0])
@@ -79,6 +80,25 @@ class CameraTest(unittest.TestCase):
             for ray in row:
                 print(ray.direction, end=' ')
             print()'''
+
+        for i in range(len(ray_arr)):
+            for j in range(len(ray_arr[i])):
+                assertionVal = np.allclose(camera.rays[i,j].origin, ray_arr[i][j].origin) and np.allclose(camera.rays[i,j].direction, ray_arr[i][j].direction)
+                self.assertTrue(assertionVal)
+    
+    def test_camera_init_no_basis(self):
+        TEST_SIZE = (3, 3)
+
+        e = np.array([0.0, 0.0, 0.0])
+
+        ray_direction = np.array([1.0, 0.0, 0.0])
+
+        ray_arr = np.empty((3,3), dtype=Ray)
+        ray_arr[0] = np.array([Ray(np.array([0.0, 1.0, 1.0]), ray_direction), Ray(np.array([0.0, 0.0, 1.0]), ray_direction), Ray(np.array([0.0, -1.0, 1.0]), ray_direction)])
+        ray_arr[1] = np.array([Ray(np.array([0.0, 1.0, 0.0]), ray_direction), Ray(np.array([0.0, 0.0, 0.0]), ray_direction), Ray(np.array([0.0, -1.0, 0.0]), ray_direction)])
+        ray_arr[2] = np.array([Ray(np.array([0.0, 1.0, -1.0]), ray_direction), Ray(np.array([0.0, 0.0, -1.0]), ray_direction), Ray(np.array([0.0, -1.0, -1.0]), ray_direction)])
+
+        camera = Camera(None, TEST_SIZE, e)
 
         for i in range(len(ray_arr)):
             for j in range(len(ray_arr[i])):

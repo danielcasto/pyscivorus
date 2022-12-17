@@ -20,15 +20,20 @@ class Camera:
         
         Size is converted from (width, height) to (height, width) and the resulting array is tranposed back to (width, height) when picture is taken. This is because (height, width) is
         more intuitive with array operations but pygame uses convention (width, height)'''
-        # TODO make basis optional argument and by default have w=<-1,0,0>, v=<0,0,1>, u=<0,-1,0>
 
-        self.w = basis['w']
-        self.v = basis['v']
-        self.u = basis['u']
+        if basis is None:
+            self.v = np.array([0.0, 0.0, 1.0])
+            self.u = np.array([0.0, -1.0, 0.0])
+            self.w = np.array([-1.0, 0.0, 0.0])
+        else:
+            self.w = basis['w']
+            self.v = basis['v']
+            self.u = basis['u']
 
-        self.w = self.w/norm(self.w)
-        self.v = self.v/norm(self.v)
-        self.u = self.u/norm(self.u)
+            self.w = self.w/norm(self.w)
+            self.v = self.v/norm(self.v)
+            self.u = self.u/norm(self.u)
+        
 
         are_all_orthogonal = np.isclose(np.dot(self.w, self.v), 0) and np.isclose(np.dot(self.v, self.u), 0) and np.isclose(np.dot(self.u, self.w), 0)
 
@@ -51,7 +56,7 @@ class Camera:
         if self.d is None:
             # Parallel camera
             # This makes sense because the top left corner of the camera's perspective will have a positive v but a negative u
-            top_left_corner_pos = np.array(self.e + (height//2)*self.v - (width//2)*self.u) # TODO will this method always work at every angle and axis?
+            top_left_corner_pos = np.array(self.e + (height//2)*self.v - (width//2)*self.u)
 
             for i in range(height):
                 for j in range(width):
@@ -60,7 +65,7 @@ class Camera:
             rootLogger.debug('Parallel camera initialized.')
         else:
             # Perspective camera
-            top_left_direction = np.array((-self.w)*self.d + (height//2)*self.v - (width//2)*self.u) # TODO will this method always work at every angle and axis?
+            top_left_direction = np.array((-self.w)*self.d + (height//2)*self.v - (width//2)*self.u)
             for i in range(height):
                 for j in range(width):
                     current_direction = top_left_direction - i*self.v + j*self.u
