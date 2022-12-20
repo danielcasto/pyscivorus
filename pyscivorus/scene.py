@@ -80,14 +80,22 @@ class Scene:
         return self
 
     def move_camera_to(self, position: np.array):
-        rootLogger.error('This function has not been implemented yet')
-        raise Exception('This function has not been implemented yet')
+        if self.camera == None:
+            rootLogger.error('No camera was set but move_camera_to called.')
+            raise Exception('You must set a camera before trying to use it; call with_parallel_camera or with_perspective_camera first')
+
+        self.camera.change_camera_position(position)
     
     def move_camera_relative(self, relative_position: np.array):
-        rootLogger.error('This function has not been implemented yet')
-        raise Exception('This function has not been implemented yet')
+        if self.camera == None:
+            rootLogger.error('No camera was set but move_camera_relative called.')
+            raise Exception('You must set a camera before trying to use it; call with_parallel_camera or with_perspective_camera first')
+
+        self.camera.change_camera_position(self.camera.e + relative_position)
     
     # TODO rotate camera function
+    def rotate_camera_about_basis_vector(basis_vector_to_rotate: str, degrees: float):
+        pass
 
     def take_picture(self) -> np.array:
         if self.camera == None:

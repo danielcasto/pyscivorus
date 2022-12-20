@@ -34,42 +34,15 @@ class Camera:
         self.d = depth
 
         updated_ray_size = (ray_size[1], ray_size[0]) # Convert from (width, height) to (height, width)
+        self.ray_size = updated_ray_size
+        rootLogger.debug(f'rays.shape: {updated_ray_size}') # TODO if I add a resize rays function move this to there
 
-        self.rays = np.empty(updated_ray_size, dtype=Ray)
-
-        rootLogger.debug(f'rays.shape: {self.rays.shape}')
-
-        height = updated_ray_size[0]
-        width = updated_ray_size[1]
-        
         if self.d is None:
-            # Parallel camera
-            # This makes sense because the top left corner of the camera's perspective will have a positive v but a negative u
-            top_left_corner_pos = np.array(self.e + (height//2)*self.v - (width//2)*self.u)
-
-            for i in range(height):
-                for j in range(width):
-                    self.rays[i, j] = Ray(top_left_corner_pos - i*self.v + j*self.u, -self.w)
-
             rootLogger.debug('Parallel camera initialized.')
+            self._set_orthogonal_rays()
         else:
-            # Perspective camera
-            top_left_direction = np.array((-self.w)*self.d + (height//2)*self.v - (width//2)*self.u)
-            for i in range(height):
-                for j in range(width):
-                    current_direction = top_left_direction - i*self.v + j*self.u
-
-                    # unit vector
-                    ray_direction = (current_direction)/norm(current_direction)
-                    self.rays[i, j] = Ray(self.e, ray_direction)
-
             rootLogger.debug('Perspective camera initialized')
-
-        rootLogger.debug(f'Rays of size {self.rays.shape} initialized.')
-        rootLogger.debug(f'Top left corner ray coordinates: {self.rays[0, 0].origin}')
-        rootLogger.debug(f'Bottom left corner ray coordinates: {self.rays[height-1, 0].origin}')
-        rootLogger.debug(f'Top right corner ray coordinates: {self.rays[0, width-1].origin}')
-        rootLogger.debug(f'Bottom right corner ray coordinates: {self.rays[height-1, width-1].origin}')
+            self._set_perspective_rays()
 
         rootLogger.debug(f'Basis:\n\tw: {self.w}\n\tv: {self.v}\n\tu: {self.u}')
         rootLogger.debug(f'Camera position: {self.e}')
@@ -90,10 +63,65 @@ class Camera:
             rootLogger.error('Camera basis invalid. Not all the basis vectors are orthogonal to each other.')
             raise Exception('Camera basis invalid. Not all the basis vectors are orthogonal to each other.')
     
-    # TODO set rays for orthogonal function
-    # TODO set rays for perspective function 
+    def _set_orthogonal_rays(self):
+        self.rays = np.empty(self.ray_size, dtype=Ray)
 
-    # TODO rotate camera function
+        height = self.ray_size[0]
+        width = self.ray_size[1]
+
+        top_left_corner_pos = np.array(self.e + (height//2)*self.v - (width//2)*self.u)
+
+        for i in range(height):
+            for j in range(width):
+                self.rays[i, j] = Ray(top_left_corner_pos - i*self.v + j*self.u, -self.w)
+        
+        rootLogger.debug(f'Rays of size {self.rays.shape} initialized.')
+        rootLogger.debug(f'Top left corner ray coordinates: {self.rays[0, 0].origin}')
+        rootLogger.debug(f'Bottom left corner ray coordinates: {self.rays[height-1, 0].origin}')
+        rootLogger.debug(f'Top right corner ray coordinates: {self.rays[0, width-1].origin}')
+        rootLogger.debug(f'Bottom right corner ray coordinates: {self.rays[height-1, width-1].origin}')
+
+    def _set_perspective_rays(self):
+        self.rays = np.empty(self.ray_size, dtype=Ray)
+
+        height = self.ray_size[0]
+        width = self.ray_size[1]
+
+        top_left_direction = np.array((-self.w)*self.d + (height//2)*self.v - (width//2)*self.u)
+        for i in range(height):
+            for j in range(width):
+                current_direction = top_left_direction - i*self.v + j*self.u
+
+                # unit vector
+                ray_direction = (current_direction)/norm(current_direction)
+                self.rays[i, j] = Ray(self.e, ray_direction)
+        
+        rootLogger.debug(f'Rays of size {self.rays.shape} initialized.')
+        rootLogger.debug(f'Top left corner ray coordinates: {self.rays[0, 0].origin}')
+        rootLogger.debug(f'Bottom left corner ray coordinates: {self.rays[height-1, 0].origin}')
+        rootLogger.debug(f'Top right corner ray coordinates: {self.rays[0, width-1].origin}')
+        rootLogger.debug(f'Bottom right corner ray coordinates: {self.rays[height-1, width-1].origin}')
+
+    def rotate_camera_about_basis_vector(basis_vector_to_rotate: str, degrees: float): # TODO
+        pass
+
+    def change_camera_position(self, position: np.array):
+        self.e = position
+
+        if self.get_camera_type() == 'perspective':
+            # Faster than calling self._set_perspective_rays()
+
+            height = self.ray_size[0]
+            width = self.ray_size[1]
+            
+            for i in range(height):
+                for j in range(width):
+                    self.rays[i,j].origin = self.e
+        else:
+            # But calling this is still necessary because calculations need to be made based on the position for each ray
+            self._set_orthogonal_rays()
+
+        rootLogger.debug(f'Camera position changed to: {self.e}')
             
     def get_camera_type(self) -> str:
         if self.d is None:

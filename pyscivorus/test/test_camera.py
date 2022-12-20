@@ -107,8 +107,93 @@ class CameraTest(unittest.TestCase):
         self.assertTrue(np.allclose(expected_basis['v'], camera.v))
         self.assertTrue(np.allclose(expected_basis['w'], camera.w))
 
+    def test__set_basis(self): # TODO
+        TEST_SIZE = (3, 3)
+
+        test_basis = {
+            'u': np.array([0.0, -1.0, 1.0]),
+            'v': np.array([0.0, 0.0, 1.0]),
+            'w': np.array([-1.0, 0.0, 0.0])
+        }
+
+        e = np.array([0.0, 0.0, 0.0])
+
+        camera = Camera(None, TEST_SIZE, e)
+
+        with self.assertRaises(Exception):
+            camera._set_basis(test_basis)
+    
     def test_take_picture(self): # TODO
         pass
+
+    def test_change_camera_position(self):
+        # Orthographic
+        TEST_SIZE = (3, 3)
+
+        u = np.array([0.0, -1.0, 0.0])
+        v = np.array([0.0, 0.0, 1.0])
+        w = np.array([-1.0, 0.0, 0.0])
+
+        e = np.array([0.0, 0.0, 0.0])
+
+        basis = {
+            'u': u,
+            'v': v,
+            'w': w
+        }
+
+        new_e = np.array([0.0, 1.0, 0.0])
+
+        ray_direction = np.array([1.0, 0.0, 0.0])
+
+        ray_arr = np.empty((3,3), dtype=Ray)
+        ray_arr[0] = np.array([Ray(np.array([0.0, 2.0, 1.0]), ray_direction), Ray(np.array([0.0, 1.0, 1.0]), ray_direction), Ray(np.array([0.0, 0.0, 1.0]), ray_direction)])
+        ray_arr[1] = np.array([Ray(np.array([0.0, 2.0, 0.0]), ray_direction), Ray(np.array([0.0, 1.0, 0.0]), ray_direction), Ray(np.array([0.0, 0.0, 0.0]), ray_direction)])
+        ray_arr[2] = np.array([Ray(np.array([0.0, 2.0, -1.0]), ray_direction), Ray(np.array([0.0, 1.0, -1.0]), ray_direction), Ray(np.array([0.0, 0.0, -1.0]), ray_direction)])
+
+        camera = Camera(basis, TEST_SIZE, e)
+
+        camera.change_camera_position(new_e)
+
+        for i in range(len(ray_arr)):
+            for j in range(len(ray_arr[i])):
+                assertionVal = np.allclose(camera.rays[i,j].origin, ray_arr[i][j].origin) and np.allclose(camera.rays[i,j].direction, ray_arr[i][j].direction)
+                self.assertTrue(assertionVal)
+
+        
+        # Perspective
+        u = np.array([0.0, -1.0, 0.0])
+        v = np.array([0.0, 0.0, 1.0])
+        w = np.array([1.0, 0.0, 0.0])
+
+        e = np.array([0.0, 0.0, 0.0])
+
+        basis = {
+            'u': u,
+            'v': v,
+            'w': w
+        }
+
+        d = 5.0
+        ray_position = new_e
+
+        ray_arr = np.empty((3,3), dtype=Ray)
+        ray_arr[0] = np.array([Ray(ray_position, np.array([-5.0, 1.0, 1.0])), Ray(ray_position, np.array([-5.0, 0.0, 1.0])), Ray(ray_position, np.array([-5.0, -1.0, 1.0]))])
+        ray_arr[1] = np.array([Ray(ray_position, np.array([-5.0, 1.0, 0.0])), Ray(ray_position, np.array([-5.0, 0.0, 0.0])), Ray(ray_position, np.array([-5.0, -1.0, 0.0]))])
+        ray_arr[2] = np.array([Ray(ray_position, np.array([-5.0, 1.0, -1.0])), Ray(ray_position, np.array([-5.0, 0.0, -1.0])), Ray(ray_position, np.array([-5.0, -1.0, -1.0]))])
+
+        for i in range(len(ray_arr)):
+            for j in range(len(ray_arr[i])):
+                ray_arr[i,j].direction = ray_arr[i,j].direction / norm(ray_arr[i,j].direction)
+
+        camera = Camera(basis, TEST_SIZE, e, d)
+
+        camera.change_camera_position(new_e)
+
+        for i in range(len(ray_arr)):
+            for j in range(len(ray_arr[i])):
+                assertionVal = np.allclose(camera.rays[i,j].origin, ray_arr[i][j].origin) and np.allclose(camera.rays[i,j].direction, ray_arr[i][j].direction)
+                self.assertTrue(assertionVal)
     
     def test_get_camera_type(self):
         TEST_SIZE = (3, 3)
