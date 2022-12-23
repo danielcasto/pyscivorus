@@ -2,7 +2,7 @@ import logging
 import numpy as np
 from typing import Any
 from light import DirectionalLight, PointLight
-from shape import Sphere
+from shape import Sphere, Triangle
 from camera import Camera
 
 rootLogger = logging.getLogger('root')
@@ -60,6 +60,12 @@ class Scene:
     def add_sphere(self, center: np.array, color: np.array, radius: float, phong_exponent: float = 10) -> Any:
         self.shapes.append(Sphere(center, color, radius, phong_exponent))
         rootLogger.debug('Sphere added')
+
+        return self
+
+    def add_triangle(self, vertex0_pos, vertex1_pos, vertex2_pos, color: np.array, phong_exponent: float) -> Any:
+        self.shapes.append(Triangle(vertex0_pos, vertex1_pos, vertex2_pos, color, phong_exponent))
+        rootLogger.debug('Triangle added')
 
         return self
 

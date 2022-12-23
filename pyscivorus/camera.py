@@ -3,7 +3,7 @@ import numpy as np
 from typing import Optional
 from numpy.linalg import norm
 from math import isclose, sqrt
-from shape import Sphere
+from shape import Sphere, Triangle
 from light import DirectionalLight, PointLight
 
 rootLogger = logging.getLogger('root')
@@ -189,6 +189,60 @@ class Camera:
         # Finally, return t or None
         return valid_t
     
+    def _get_triangle_valid_solution(self, triangle: Triangle, ray: Ray) -> Optional[float]:
+        '''
+        This function finds t and returns if valid. If not, returns None
+
+        Step to find and validate t:
+            1. Find t intersection of _plane_ of triangle
+            2. Find point of intersection
+            3. Perform the inside-outside test to make sure solution is within triangle
+
+        1.
+            ray function: r(t) = O + d*t
+            triangle normal: n
+            vertex 0: v0
+            t = [(v0 - O)*n] / (d*n)
+                **First make sure n*d is not 0!**
+
+        2.
+            point Q = O + d*t
+
+        3.
+            point Q is inide triangle with vertices (A, B, C) (order in counter clockwise direction) if follwing conditions are met:
+                [(B-A) X (Q-A)] * n >= 0
+                [(C-B) X (Q-B)] * n >= 0
+                [(A-C) X (Q-C)] * n >= 0
+        '''
+
+        # 1.
+        if isclose(np.dot(triangle.normal, ray.direction), 0.0):
+            return None
+        
+        vertex0 = triangle.vertices[0]
+        vertex1 = triangle.vertices[1]
+        vertex2 = triangle.vertices[2]
+
+        t = np.dot((vertex0 - ray.origin), triangle.normal) / np.dot(ray.direction, triangle.normal)
+
+        if t < 0: # We don't render shapes with negative t's
+            return None
+
+        # 2.
+        point = ray.origin + ray.direction * t
+
+        # 3.
+        if np.dot(np.cross((vertex1 - vertex0), (point - vertex0)), triangle.normal) < 0.0:
+            return None
+        
+        if np.dot(np.cross((vertex2 - vertex1), (point - vertex1)), triangle.normal) < 0.0:
+            return None
+        
+        if np.dot(np.cross((vertex0 - vertex2), (point - vertex2)), triangle.normal) < 0.0:
+            return None
+        
+        return t
+    
     def _find_solutions(self, shapes) -> np.array:
         # Finds ray intersection with shape and returns np.array of elements that are either (t_val, shape_type) or None if no intersection at that pixel
         solution_array = np.empty(self.rays.shape, dtype=object)
@@ -202,9 +256,13 @@ class Camera:
                 potential_ts = []
                 for shape in shapes:
                     if isinstance(shape, Sphere):
-                            sphere_t = self._get_sphere_valid_solution(shape, self.rays[i, j]) # This functions takes care of the issue of t being negative
-                            if sphere_t is not None:
-                                potential_ts.append((sphere_t, shape))
+                        sphere_t = self._get_sphere_valid_solution(shape, self.rays[i, j]) # This functions takes care of the issue of t being negative
+                        if sphere_t is not None:
+                            potential_ts.append((sphere_t, shape))
+                    elif isinstance(shape, Triangle):
+                        triangle_t = self._get_triangle_valid_solution(shape, self.rays[i,j]) # This functions takes care of the issue of t being negative
+                        if triangle_t is not None:
+                            potential_ts.append((triangle_t, shape))
                     else:
                         rootLogger.error(f'This object is not a supported shape. Type: {shape}.')
                         raise Exception(shape, 'This object is not a supported shape.')
@@ -238,6 +296,8 @@ class Camera:
 
                 if isinstance(shape, Sphere):
                     n = (point_on_surface - shape.center) / norm((point_on_surface - shape.center))
+                elif isinstance(shape, Triangle):
+                    n = shape.normal
                 else:
                     rootLogger.error(f'This object is not a supported shape. Type: {shape}.')
                     raise Exception(shape, 'This object is not a supported shape.')
