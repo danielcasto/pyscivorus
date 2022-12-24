@@ -256,11 +256,11 @@ class Camera:
                 potential_ts = []
                 for shape in shapes:
                     if isinstance(shape, Sphere):
-                        sphere_t = self._get_sphere_valid_solution(shape, self.rays[i, j]) # This functions takes care of the issue of t being negative
+                        sphere_t = self._get_sphere_valid_solution(shape, self.rays[i, j]) # This function takes care of the issue of t being negative
                         if sphere_t is not None:
                             potential_ts.append((sphere_t, shape))
                     elif isinstance(shape, Triangle):
-                        triangle_t = self._get_triangle_valid_solution(shape, self.rays[i,j]) # This functions takes care of the issue of t being negative
+                        triangle_t = self._get_triangle_valid_solution(shape, self.rays[i,j]) # This function takes care of the issue of t being negative
                         if triangle_t is not None:
                             potential_ts.append((triangle_t, shape))
                     else:
@@ -310,9 +310,15 @@ class Camera:
                     if isinstance(light, DirectionalLight):
                         intensity_at_point = light.intensity
                         l = -light.direction
+                    elif isinstance(light, PointLight):
+                        surface_to_light_vector = light.position - point_on_surface
+                        distance_from_surface_to_light = norm(surface_to_light_vector)
+
+                        intensity_at_point = light.intensity / (distance_from_surface_to_light ** 2)
+                        l = surface_to_light_vector / distance_from_surface_to_light
                     else:
-                        rootLogger.error(f'This object is not a supported shape. Type: {shape}.')
-                        raise Exception(shape, 'This object is not a supported shape.')
+                        rootLogger.error(f'This object is not a supported light. Type: {light}.')
+                        raise Exception(shape, 'This object is not a supported light.')
                     
                     # All the vectors here are unit vectors
                     h = (v + l) / norm(v + l)

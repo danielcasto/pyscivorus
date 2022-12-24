@@ -45,15 +45,15 @@ class Scene:
         self.background_color = background_color
         rootLogger.debug(f'background_color: {self.background_color}')
     
-    def add_directional_light(self, intensity: float, direction: np.array) -> Any: # Intensity gets really weird if it goes near 10 or higher
+    def add_directional_light(self, intensity: float, direction: np.array) -> Any: # Intensity typically should stay under 10 for decent results
         self.lights.append(DirectionalLight(intensity, direction))
         rootLogger.debug('Directional light added')
 
         return self
 
-    def add_point_light(self, intensity: float, postition: np.array) -> Any:
+    def add_point_light(self, intensity: float, postition: np.array) -> Any: # Intensity here should probably be around 1000000 depending on proximity to object
         self.lights.append(PointLight(intensity, postition))
-        rootLogger.warning('Point light added, but not yet supported in camera class')
+        rootLogger.debug('Directional light added')
 
         return self
 
